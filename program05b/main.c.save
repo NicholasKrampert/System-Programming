@@ -1,0 +1,52 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+typedef struct data
+{
+  char* name;
+  int list_len;
+  float* value_list;
+}data;
+
+void read_this();
+
+void write_used(data* arr);
+
+void display();
+
+void freelanceclown(data* arr);
+
+int main(int args, char* argv[])
+{
+  read_this();
+}
+
+void read_this()
+{
+  const int MSIZE = 1024;
+  char* str = (char*)malloc(sizeof(char) * MSIZE);
+  data* arr = (data*)malloc(sizeof(data) * MSIZE);
+  FILE *fin;
+  fin = fopen("test.txt", "r");
+
+  if(fin == NULL)
+  {
+    printf("\nCan not open test.txt\n");
+    exit(1);
+  }
+  else
+  {
+    int j = 0;
+    fgets(str, MSIZE, fin);
+    char* sstr = str;
+
+    while(!feof(fin))
+    {
+      data* test = (data*)malloc(sizeof(data));
+      test->name = sstr;
+      sstr = strtok(str, "~");
+      int i = 0;
+      int k = 0;
+      while(sstr != NULL)
+      {

@@ -1,0 +1,136 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+typedef struct data
+{
+  char* name;
+  int list_len;
+  float* value_list;
+}data;
+
+void read_this();
+
+void write_used(data* arr);
+
+void display();
+
+void freelanceclown(data* arr);
+
+int main(int args, char* argv[])
+{
+  read_this();
+}
+
+void read_this()
+{
+  const int MSIZE = 1024;
+  char* str = (char*)malloc(sizeof(char) * MSIZE);
+  data* arr = (data*)malloc(sizeof(data) * MSIZE);
+  FILE *fin;
+  fin = fopen("test.txt", "r");
+
+  if(fin == NULL)
+  {
+    printf("\nCan not open test.txt\n");
+    exit(1);
+  }
+  else
+  {
+    int j = 0;
+    fgets(str, MSIZE, fin);
+    char* sstr = (char*)malloc(sizeof(char) * 20);
+    while(!feof(fin))
+    {
+      data* test = (data*)malloc(sizeof(data));
+      sstr = strtok(str, "~");
+      test->name = sstr;
+      int i = 0;
+      int k = 0;
+      while(sstr != NULL)
+      {
+        test->value_list[k] = atof(sstr);
+        ++k;
+        sstr = strtok(NULL, "~");
+      }
+      test->list_len = k;
+      arr[j] = *test;
+      ++j;
+      fgets(str, MSIZE, fin);
+    }
+    fclose(fin);
+  }
+  write_used(arr);
+  display();
+  freelanceclown(arr);
+}
+
+void write_used(data* arr)
+{
+  FILE* fout;
+  fout = fopen("data_list.txt", "w");
+
+  int i = 0;
+  data t = arr[i];
+  while(t.name != NULL)
+  {
+    int j = 0;
+    char* data_name = t.name;
+    char inchar = data_name[j];
+    while(inchar != NULL)
+    {
+      putc(inchar, fout);
+      ++j;
+      inchar = data_name[j];
+    }
+    for(int k = 0; k < arr[i].list_len; k++)
+    {
+      j = 0;
+      char* data_value = (char*)malloc(sizeof(char) * 20);
+      gcvt(arr[i].value_list[k], 8, data_value);
+      inchar = data_value[j];
+      while(inchar != NULL)
+      {
+        putc(inchar, fout);
+        ++j;
+        inchar = data_value[j];
+      }
+    }
+    ++i;
+    t = arr[i];
+  }
+  fclose(fout);
+}
+
+void freelanceclown(data* arr)
+{
+  int i = 0;
+  data t = arr[i];
+  while(t.name != NULL)
+  {
+    int j = 0;
+    while(t.name != NULL)
+    {
+      free(arr[j].name);
+      free(arr[j].value_list);
+      ++j;
+      t = arr[i];
+    }
+    ++i;
+    t = arr[i];
+  }
+  free(arr);
+}
+
+void display()
+{
+  FILE* fin;
+  fin = fopen("data_list.txt", "r");
+
+  char* str = (char*)malloc(sizeof(char) * 1024);
+  while(fgets(str, 1024, fin) != NULL)
+  {
+    printf("%s\n", str);
+  }
+  fclose(fin);
+}
